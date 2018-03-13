@@ -34,7 +34,7 @@ pipeline {
 
                 stage('Deploy to PROD') {
                     steps {
-                        sh "scp -i /home/marcin/UDEMY/jenkins_course_for_developeres/tomcat-for-jenkins-course.pem /var/lib/jenkins/workspace/FullyAutomated/webapp/target/webapp.warr ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                        sh "scp -i /home/marcin/UDEMY/jenkins_course_for_developeres/tomcat-for-jenkins-course.pem /var/lib/jenkins/workspace/FullyAutomated/webapp/target/webapp.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
                     }
                 }
             }
