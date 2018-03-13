@@ -26,11 +26,15 @@ pipeline {
         stage('Deployments') {
             parallel {
                 stage('Deploy to Staging') {
-                    sh "scp -i /home/marcin/UDEMY/jenkins_course_for_developeres/tomcat-for-jenkins-course.pem **/target/*.war ec2-user@${params.tomcat_stage}:/var/lib/tomcat7/webapps"
+                    steps {
+                        sh "scp -i /home/marcin/UDEMY/jenkins_course_for_developeres/tomcat-for-jenkins-course.pem **/target/*.war ec2-user@${params.tomcat_stage}:/var/lib/tomcat7/webapps"
+                    }
                 }
 
                 stage('Deploy to PROD') {
-                    sh "scp -i /home/marcin/UDEMY/jenkins_course_for_developeres/tomcat-for-jenkins-course.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                    steps {
+                        sh "scp -i /home/marcin/UDEMY/jenkins_course_for_developeres/tomcat-for-jenkins-course.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                    }
                 }
             }
         }
