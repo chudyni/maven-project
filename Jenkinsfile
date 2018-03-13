@@ -1,38 +1,35 @@
 pipeline {
     agent any
-    stages{
-        stage('Build'){
-            steps {
-                sh 'mvn clean package'
-            }
-            post {
-                success {
-                    echo 'Now Archiving...'
-                    archiveArtifacts artifacts: '**/target/*.war'
-                }
+
+    parameters {
+        string(name: 'tomcat_stage', defaultValue: '18.221.237.27', description: 'Staging')
+        string(name: 'tomcat_prod', defaultValue: '127.0.0.1', description: 'PROD')
+    }
+
+    triggers {
+        pollSCM('* * * * *')
+    }
+
+    stage('Build') {
+        steps {
+            sh 'mvn clean package'
+        }
+        post {
+            success {
+                echo 'Building war...'
+                archiveArtifacts artifacts: '**/target/*.war'
             }
         }
-        stage('Deploy to Staging'){
-            steps {
-                build job: 'deploy-to-staging'
-            }
-        }
-        stage('Deploy to Prod'){
-            steps {
-                timeout(time:5, unit: 'DAYS'){
-                    input message: 'Approve PROD deployment?'
-                }
+    }
 
-                build job: 'deploy-to-prod'
+    stage('Deployments') {
+        parallel {
+            stage('Deploy to Staging') {
+                sh "scp -i /home/marcin/UDEMY/jenkins_course_for_developeres/tomcat-for-jenkins-course.pem **/target/*.war ec2-user@${params.tomcat_stage}:/var/lib/tomcat7/webapps"
             }
-            post {
-                success {
-                    echo 'Deployed to PROD'
-                }
 
-                failure {
-                    echo 'Deployment to PROD - FAILED'
-                }
+            stage('Deploy to PROD') {
+                sh "scp -i /home/marcin/UDEMY/jenkins_course_for_developeres/tomcat-for-jenkins-course.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
             }
         }
     }
