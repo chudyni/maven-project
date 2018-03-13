@@ -27,8 +27,7 @@ pipeline {
             parallel {
                 stage('Deploy to Staging') {
                     steps {
-                        sh "ssh -o StrictHostKeyChecking=No ec2-user@${params.tomcat_stage}"
-                        sh "scp -i /home/marcin/UDEMY/jenkins_course_for_developeres/tomcat-for-jenkins-course.pem **/target/*.war ec2-user@${params.tomcat_stage}:/var/lib/tomcat7/webapps"
+                        sh "scp -o StrictHostKeyChecking=No -i /home/marcin/UDEMY/jenkins_course_for_developeres/tomcat-for-jenkins-course.pem **/target/*.war ec2-user@${params.tomcat_stage}:/var/lib/tomcat7/webapps"
                     }
                 }
 
